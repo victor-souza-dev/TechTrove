@@ -2,11 +2,10 @@ namespace Back.Models.Entities
 {
   public class Shopping
   {
-    public Guid id { get; set; }
-    public List<Product> products { get; set; }
-
-    //fore keys
-    public Guid UserId { get; set; }
-    public User user { get; set; }
-  }
+    public Guid Id { get; private set; }
+    public Guid ProductId { get; private set; }
+    public ICollection<Product> Product { get; private set; } = new List<Product>();
+    public Guid UserId { get; private set; }
+    public User User { get; private set; }
+    }
 }
