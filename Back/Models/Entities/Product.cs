@@ -8,5 +8,17 @@ public class Product
     public string Model { get; set; }
     public string Characteristics { get; set; }
     public decimal Price { get; set; }
-    public string Images { get; set; }
+    public string Image { get; set; }
+    public bool IsDelete { get; private set; } = false;
+
+    public Product(string name, string brand, string model, string characteristics, decimal price, string image, bool isDelete)
+    {
+        Name = name;
+        Brand = brand;
+        Model = model;
+        Characteristics = characteristics;
+        Price = price;
+        Image = image;
+        IsDelete = isDelete;
+    }
 }
