@@ -20,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Input\" />
-    <Folder Include="Models\View\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Repositories\Interfaces\" />
   </ItemGroup>
 

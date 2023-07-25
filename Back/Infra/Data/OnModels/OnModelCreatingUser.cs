@@ -8,6 +8,6 @@ public class OnModelCreatingUser : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        throw new NotImplementedException();
+        
     }
 }

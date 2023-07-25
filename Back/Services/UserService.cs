@@ -1,11 +1,10 @@
 ﻿using Back.Infra.Data;
 using Back.Models.Entities;
 using Back.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Back.Services;
 
-public class UserService: IUserService
+public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
 
