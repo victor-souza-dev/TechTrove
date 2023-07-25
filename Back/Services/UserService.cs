@@ -49,7 +49,7 @@ public class UserService: IUserService
             throw new Exception("Usuário não existe");
         }
 
-        existingEmployee.UpdatedEmployee(user.UserName);
+        existingEmployee.Updated(user.UserName);
 
         _context.Entry(existingEmployee).CurrentValues.SetValues(user);
         _context.SaveChanges();

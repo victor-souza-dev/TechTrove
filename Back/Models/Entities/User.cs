@@ -8,6 +8,8 @@ public class User
     public string UserName { get; private set; }
     public bool IsDeleted { get; private set; }
     public DateTime UpdatedAt { get; private set; }
+    public Guid UserShopping { get; private set; }
+    public User Shopping { get; private set; }
 
     public User(string email, string password, string userName, bool isDeleted)
     {

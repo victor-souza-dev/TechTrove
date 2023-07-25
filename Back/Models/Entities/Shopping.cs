@@ -7,5 +7,10 @@ namespace Back.Models.Entities
     public ICollection<Product> Product { get; private set; } = new List<Product>();
     public Guid UserId { get; private set; }
     public User User { get; private set; }
+
+    public Shopping(Guid productId, Guid userId)
+    {
+        ProductId = productId;
+        UserId = userId;
     }
 }
