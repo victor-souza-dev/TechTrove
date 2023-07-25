@@ -1,5 +1,6 @@
 ﻿using Back.Infra.Data;
 using Back.Models.Entities;
+using Back.Models.Input;
 using Back.Services.Interfaces;
 
 namespace Back.Services;
@@ -39,7 +40,7 @@ public class UserService : IUserService
         return true;
     }
 
-    public bool Update(Guid id, User user)
+    public bool Update(Guid id, UserInputUpdate user)
     {
         var existingEmployee = _context.User.Find(id);
 

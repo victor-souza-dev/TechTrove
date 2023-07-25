@@ -19,10 +19,7 @@ public class UserValidatorUpdated : AbstractValidator<UserInputUpdate>
 {
     public UserValidatorUpdated()
     {
-        RuleFor(p => p.Email)
-            .NotEmpty()
-            .WithMessage("Campo obrigatório");
-        RuleFor(p => p.Password)
+        RuleFor(p => p.UserName)
             .NotEmpty()
             .WithMessage("Campo obrigatório");
     }

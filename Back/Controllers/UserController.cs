@@ -56,10 +56,8 @@ namespace Back.Controllers
             return BadRequest();
         }
         [HttpPut("{id}")]
-        public IActionResult Put(Guid id, UserInputUpdate data)
+        public IActionResult Put(Guid id, UserInputUpdate user)
         {
-            var user = _mapper.Map<User>(data);
-
             bool result = _service.Update(id, user);
 
             if (result)

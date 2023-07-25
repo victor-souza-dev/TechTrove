@@ -6,15 +6,14 @@ public class User
     public string Email { get; private set; }
     public string Password { get; private set; }
     public string UserName { get; private set; }
-    public bool? IsDeleted { get; private set; }
+    public bool? IsDeleted { get; private set; } = false;
     public DateTime UpdatedAt { get; private set; }
 
-    public User(string email, string password, string userName, bool? isDeleted)
+    public User(string email, string password, string userName)
     {
         Email = email;
         Password = password;
         UserName = userName;
-        IsDeleted = isDeleted;
     }
 
     public void MarkAsDeleted()
