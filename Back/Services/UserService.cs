@@ -8,10 +8,11 @@ namespace Back.Services;
 public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
-
-    public UserService(ApplicationDbContext context)
+    private readonly IConfiguration _config;
+    public UserService(ApplicationDbContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
     }
 
     public List<User> GetAll()
@@ -70,5 +71,10 @@ public class UserService : IUserService
         _context.SaveChanges();
 
         return true;
+    }
+
+    public string Login(User user)
+    {
+        var instanceUser = new User();
     }
 }

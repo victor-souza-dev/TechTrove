@@ -1,11 +1,16 @@
-﻿namespace Back.Models.Entities;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace Back.Models.Entities;
 
 public class User
 {
     public Guid Id { get; private set; }
     public string Email { get; private set; }
     public string Password { get; private set; }
-    public string UserName { get; private set; }
+    public string? UserName { get; private set; }
     public bool? IsDeleted { get; private set; } = false;
     public DateTime UpdatedAt { get; private set; }
 
@@ -26,5 +31,19 @@ public class User
     {
         UserName = userName;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    public string GenerateToken(User user, string secretKey)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(secretKey);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Expires= DateTime.UtcNow.AddHours(8),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                algorithm: SecurityAlgorithms.HmacSha256Signature
+        };
+        return "";
     }
 }

@@ -5,6 +5,7 @@ namespace Back.Services.Interfaces;
 
 public interface IUserService
 {
+    string Login(User user);
     List<User> GetAll();
     User GetById(Guid id);
     bool Created(User user);

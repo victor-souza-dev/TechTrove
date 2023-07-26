@@ -21,6 +21,18 @@ namespace Back.Controllers.v1
             _mapper = mapper;
         }
 
+        [HttpPost("login")]
+        public IActionResult Login(UserInputLogin data) {
+            var user = _mapper.Map<User>(data);
+            string result = _service.Login(user);
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
         [HttpGet]
         public IActionResult GetAll()
         {
