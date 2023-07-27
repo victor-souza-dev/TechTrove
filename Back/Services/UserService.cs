@@ -1,7 +1,9 @@
 ﻿using Back.Infra.Data;
 using Back.Models.Entities;
 using Back.Models.Input;
+using Back.Repositories.Interfaces;
 using Back.Services.Interfaces;
+using Back.Utils;
 
 namespace Back.Services;
 
@@ -9,10 +11,14 @@ public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _config;
-    public UserService(ApplicationDbContext context, IConfiguration config)
+    private readonly IAuthUser _authUser;
+    private readonly HashedString _hashedString;
+    public UserService(ApplicationDbContext context, IConfiguration config, IAuthUser authUser, HashedString hashedString)
     {
         _context = context;
         _config = config;
+        _authUser = authUser;
+        _hashedString = hashedString;
     }
 
     public List<User> GetAll()
@@ -36,7 +42,9 @@ public class UserService : IUserService
 
     public bool Created(User user)
     {
-        _context.User.Add(user);
+        string hashPassword = _hashedString.GetHashedPassword(user.Password);
+        User formatUser = new User(user.Email, hashPassword, user.UserName);
+        _context.User.Add(formatUser);
         _context.SaveChanges();
         return true;
     }
@@ -75,6 +83,13 @@ public class UserService : IUserService
 
     public string Login(User user)
     {
-        var instanceUser = new User();
+        var validateUser = _authUser.ValidateUser(user);
+        if(validateUser != null)
+        {
+            throw new Exception("Usuário inválido!");
+        }
+        string token = _authUser.GenerateToken(user.Id, user.Email, user.UserName);
+
+        return token;
     }
 }

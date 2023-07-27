@@ -9,6 +9,7 @@ public class UserMapper: Profile
 {
     public UserMapper()
     {
+        CreateMap<UserInputLogin, User>();
         CreateMap<UserInputCreate, User>();
         CreateMap<User, UserView>();
     }

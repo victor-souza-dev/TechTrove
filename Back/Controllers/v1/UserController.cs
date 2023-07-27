@@ -3,10 +3,12 @@ using Back.Models.Entities;
 using Back.Models.Input;
 using Back.Models.View;
 using Back.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Back.Controllers.v1
 {
+    [Authorize]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
@@ -21,17 +23,17 @@ namespace Back.Controllers.v1
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login(UserInputLogin data) {
             var user = _mapper.Map<User>(data);
-            string result = _service.Login(user);
-
-            if (result == null)
+            try
             {
-                return BadRequest();
+                string result = _service.Login(user);
+                return Ok(result);
+            } catch(Exception ex) {
+                return BadRequest(ex.Message);
             }
-
-            return Ok(result);
         }
         [HttpGet]
         public IActionResult GetAll()
@@ -55,6 +57,7 @@ namespace Back.Controllers.v1
                 return BadRequest(ex);
             }
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Post(UserInputCreate data)
         {
