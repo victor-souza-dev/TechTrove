@@ -1,4 +1,4 @@
-using Back;
+using Back.Conventions;
 using Back.Infra.Data;
 using Back.Mapper;
 using Back.Repositories;
@@ -11,11 +11,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 ConfigurationManager config = builder.Configuration;
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(config).CreateLogger();
 
 builder.Services.AddAuthentication(x =>
 {
@@ -35,12 +36,20 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true
 };
 });
+builder.Services.AddSqlServer<ApplicationDbContext>(config["ConnectionString:Database"]);
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog(dispose: true);
+});
 builder.Services.AddControllers().AddFluentValidation(config =>
 {
     config.RegisterValidatorsFromAssemblies(new List<System.Reflection.Assembly> { typeof(Program).Assembly });
 });
-builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration["ConnectionString:Database"]);
 builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Conventions.Add(new LowercaseControllerConvention());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -87,6 +96,7 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 builder.Services.AddSingleton<HashedString>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -95,13 +105,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseMiddleware<MiddlewareAuthentication>("Test");
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

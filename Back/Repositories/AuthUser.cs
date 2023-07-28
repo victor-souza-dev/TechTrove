@@ -22,10 +22,40 @@ public class AuthUser : IAuthUser
         _hashedString = hashedString;
     }
 
-    public string GenerateToken(Guid id, string email, string userName)
+    public Dictionary<string, string> DecodingToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_config["JwtSettings.Key"]);
+
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["JwtSettings:SecretKey"])),
+            ValidateIssuer = true,
+            ValidIssuer = _config["JwtSettings:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = _config["JwtSettings:Audience"],
+            ClockSkew = TimeSpan.Zero
+        };
+
+        SecurityToken validatedToken;
+        var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+        var claims = principal.Claims;
+        var dictionary = new Dictionary<string, string>();
+
+        dictionary.Add("Id", principal.FindFirstValue("Id"));
+        dictionary.Add("Email", principal.FindFirstValue("Email"));
+        dictionary.Add("UserName", principal.FindFirstValue("UserName"));
+
+        return dictionary;
+    }
+
+    public string GenerateToken(string id, string email, string userName)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_config["JwtSettings:SecretKey"]);
+        var issuer = _config["JwtSettings:Issuer"];
+        var audience = _config["JwtSettings:Audience"];
         var tokenConfig = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -39,13 +69,15 @@ public class AuthUser : IAuthUser
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature
             ),
+            Issuer = issuer,
+            Audience = audience,
         };
         var token = tokenHandler.CreateToken(tokenConfig);
-        var tokenString = tokenHandler.WriteToken(token);
-        return tokenString;
+
+        return tokenHandler.WriteToken(token);
     }
 
-    public List<KeyValuePair<string, string>> ValidateUser(User user)
+    public Dictionary<string, string> ValidateUser(User user)
     {
         var dbUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
 
@@ -61,11 +93,11 @@ public class AuthUser : IAuthUser
             throw new Exception(hashedPassword);
         }
 
-        return new List<KeyValuePair<string, string>>
+        return new Dictionary<string, string>
         {
-            new KeyValuePair<string, string>("Id", dbUser.Id.ToString()),
-            new KeyValuePair<string, string>("Email", dbUser.Email),
-            new KeyValuePair<string, string>("UserName", dbUser.UserName)
+            { "Id", dbUser.Id.ToString() },
+            { "Email", dbUser.Email },
+            { "UserName", dbUser.UserName }
         };
     }
 }

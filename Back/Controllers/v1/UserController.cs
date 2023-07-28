@@ -35,6 +35,31 @@ namespace Back.Controllers.v1
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            try
+            {
+                var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
+                {
+                    string token = authorizationHeader.Substring("Bearer ".Length);
+
+                    var payloadData = _service.Me(token);
+
+                    return Ok(payloadData);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+
+            }
+        }
+
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -43,6 +68,7 @@ namespace Back.Controllers.v1
 
             return Ok(viewModel);
         }
+        
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
@@ -57,6 +83,7 @@ namespace Back.Controllers.v1
                 return BadRequest(ex);
             }
         }
+        
         [AllowAnonymous]
         [HttpPost]
         public IActionResult Post(UserInputCreate data)
@@ -71,6 +98,7 @@ namespace Back.Controllers.v1
             }
             return BadRequest();
         }
+        
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, UserInputUpdate user)
         {
@@ -82,6 +110,7 @@ namespace Back.Controllers.v1
             }
             return BadRequest();
         }
+        
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

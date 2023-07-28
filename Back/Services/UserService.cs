@@ -84,12 +84,17 @@ public class UserService : IUserService
     public string Login(User user)
     {
         var validateUser = _authUser.ValidateUser(user);
-        if(validateUser != null)
+        if (validateUser == null)
         {
             throw new Exception("Usuário inválido!");
         }
-        string token = _authUser.GenerateToken(user.Id, user.Email, user.UserName);
-
+        string token = _authUser.GenerateToken(validateUser["Id"], validateUser["Email"], validateUser["UserName"]);
         return token;
+    }
+
+    public Dictionary<string, string> Me(string token)
+    {
+        var payload = _authUser.DecodingToken(token);
+        return payload;
     }
 }
