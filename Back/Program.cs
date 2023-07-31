@@ -19,6 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(config).CreateLogger();
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog(dispose: true);
+});
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -35,13 +39,9 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true
-};
+    };
 });
 builder.Services.AddSqlServer<ApplicationDbContext>(config["ConnectionString:Database"]);
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.AddSerilog(dispose: true);
-});
 builder.Services.AddControllers().AddFluentValidation(config =>
 {
     config.RegisterValidatorsFromAssemblies(new List<System.Reflection.Assembly> { typeof(Program).Assembly });
@@ -109,6 +109,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware(typeof(ErrorMiddleware));
+app.UseMiddleware<ErrorMiddleware>();
 app.MapControllers();
 app.Run();
