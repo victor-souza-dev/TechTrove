@@ -95,7 +95,7 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.GroupNameFormat = "'v'VVV";
     options.SubstituteApiVersionInUrl = true;
 });
-builder.Services.AddSingleton<HashedString>();
+builder.Services.AddTransient<HashedString>();
 
 var app = builder.Build();
 

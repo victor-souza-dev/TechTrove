@@ -13,7 +13,7 @@ public class HashedString
 
             byte[] hashBytes = sha256.ComputeHash(passwordBytes);
 
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+            return BitConverter.ToString(hashBytes);
         }
     }
 }

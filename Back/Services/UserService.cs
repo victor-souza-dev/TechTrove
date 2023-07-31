@@ -10,13 +10,11 @@ namespace Back.Services;
 public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IConfiguration _config;
     private readonly IAuthUser _authUser;
     private readonly HashedString _hashedString;
-    public UserService(ApplicationDbContext context, IConfiguration config, IAuthUser authUser, HashedString hashedString)
+    public UserService(ApplicationDbContext context, IAuthUser authUser, HashedString hashedString)
     {
         _context = context;
-        _config = config;
         _authUser = authUser;
         _hashedString = hashedString;
     }
@@ -40,13 +38,18 @@ public class UserService : IUserService
     }
 
 
-    public bool Created(User user)
+    public void Created(User user)
     {
+        var existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
+
+        if (existingUser != null)
+        {
+            throw new Exception("Usuário já existe!");
+        }
         string hashPassword = _hashedString.GetHashedPassword(user.Password);
         User formatUser = new User(user.Email, hashPassword, user.UserName);
         _context.User.Add(formatUser);
         _context.SaveChanges();
-        return true;
     }
 
     public bool Update(Guid id, UserInputUpdate user)

@@ -90,13 +90,13 @@ namespace Back.Controllers.v1
         {
             var user = _mapper.Map<User>(data);
 
-            bool result = _service.Created(user);
-
-            if (result)
+            try
             {
-                return Ok();
+                _service.Created(user);
+                return Ok("Usuário criado com sucesso!");
+            } catch(Exception ex) {
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
         }
         
         [HttpPut("{id}")]

@@ -9,7 +9,7 @@ public interface IUserService
     Dictionary<string, string> Me(string token);
     List<User> GetAll();
     User GetById(Guid id);
-    bool Created(User user);
+    void Created(User user);
     bool Update(Guid id, UserInputUpdate user);
     bool Delete(Guid id);
 }

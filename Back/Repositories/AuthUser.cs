@@ -90,7 +90,7 @@ public class AuthUser : IAuthUser
 
         if (dbUser.Password != hashedPassword)
         {
-            throw new Exception(hashedPassword);
+            throw new Exception("Senha inválida");
         }
 
         return new Dictionary<string, string>
