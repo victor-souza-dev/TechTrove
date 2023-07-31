@@ -39,25 +39,17 @@ namespace Back.Controllers.v1
         [HttpGet("me")]
         public IActionResult Me()
         {
-            try
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
             {
-                var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-                if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
-                {
-                    string token = authorizationHeader.Substring("Bearer ".Length);
+                string token = authorizationHeader.Substring("Bearer ".Length);
 
-                    var payloadData = _service.Me(token);
+                var payloadData = _service.Me(token);
 
-                    return Ok(payloadData);
-                }
-
-                return Unauthorized();
+                return Ok(payloadData);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
 
-            }
+            return Unauthorized();
         }
 
         [HttpGet]

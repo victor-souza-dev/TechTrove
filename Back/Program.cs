@@ -1,6 +1,7 @@
 using Back.Conventions;
 using Back.Infra.Data;
 using Back.Mapper;
+using Back.Middleware;
 using Back.Repositories;
 using Back.Repositories.Interfaces;
 using Back.Services;
@@ -108,5 +109,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware(typeof(ErrorMiddleware));
 app.MapControllers();
 app.Run();
