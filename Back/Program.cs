@@ -79,7 +79,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-builder.Services.AddAutoMapper(typeof(UserMapper));
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthUser, AuthUser>();
 builder.Services.AddApiVersioning(options =>

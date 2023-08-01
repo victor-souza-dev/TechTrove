@@ -4,6 +4,23 @@ networks:
   techtrover:
 
 services:
+  back:
+      build:
+        context: ./back
+        dockerfile: Dockerfile
+      container_name: techtrover-back
+      ports:
+        - "3000:80"
+        - "3001:3000"
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - DB_HOST=TechTrove
+        - DB_NAME=sa
+        - DB_SA_PASSWORD=Admin@1234
+      depends_on:
+        - TechTrover
+      networks:
+        - techtrover
   TechTrover:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: techtrover-database
