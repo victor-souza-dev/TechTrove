@@ -5,6 +5,7 @@ using Back.Models.View;
 using Back.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Back.Controllers.v1
 {
@@ -16,11 +17,15 @@ namespace Back.Controllers.v1
     {
         private readonly IUserService _service;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
+        public const string ME_KEY = "Me";
 
-        public UserController(IUserService service, IMapper mapper)
+        public UserController(IUserService service, IMapper mapper, IMemoryCache memoryCache)
         {
             _service = service;
             _mapper = mapper;
+            _memoryCache = memoryCache;
+
         }
 
         [AllowAnonymous]
@@ -42,9 +47,22 @@ namespace Back.Controllers.v1
             var authorizationHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
             if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer "))
             {
+                if(_memoryCache.TryGetValue(ME_KEY, out Dictionary<string, string> me))
+                {
+                    return Ok(me);
+                }
+
+                var memoryCacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(3600),
+                    SlidingExpiration = TimeSpan.FromSeconds(1200)
+                };
+
                 string token = authorizationHeader.Substring("Bearer ".Length);
 
                 var payloadData = _service.Me(token);
+
+                _memoryCache.Set(ME_KEY, payloadData, memoryCacheEntryOptions);
 
                 return Ok(payloadData);
             }

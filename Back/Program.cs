@@ -1,6 +1,5 @@
 using Back.Conventions;
 using Back.Infra.Data;
-using Back.Mapper;
 using Back.Middleware;
 using Back.Repositories;
 using Back.Repositories.Interfaces;
@@ -97,6 +96,8 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 builder.Services.AddTransient<HashedString>();
+builder.Services.AddMemoryCache();
+
 
 var app = builder.Build();
 
